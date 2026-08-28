@@ -65,30 +65,6 @@ ${message}
 ======================================================
 Reply directly to this email to respond to ${name} (${email}).
 `,
-    html: `
-      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0F172A; color: #F8FAFC; padding: 24px; border-radius: 12px; max-width: 600px;">
-        <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 20px;">
-          <h2 style="color: #38BDF8; margin: 0; font-size: 20px;">💬 Deepanshu's Messenger</h2>
-          <p style="color: #94A3B8; margin: 4px 0 0 0; font-size: 13px;">Real-Time Dispatch Notification</p>
-        </div>
-        
-        <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
-          <p style="margin: 0 0 8px 0;"><strong>Sender Name:</strong> <span style="color: #FFFFFF;">${name}</span></p>
-          <p style="margin: 0 0 8px 0;"><strong>Sender Email:</strong> <a href="mailto:${email}" style="color: #38BDF8; text-decoration: none;">${email}</a></p>
-          <p style="margin: 0 0 8px 0;"><strong>Subject:</strong> <span style="color: #FBBF24;">${subject}</span></p>
-          <p style="margin: 0; font-size: 12px; color: #64748B;"><strong>ID:</strong> ${id} &bull; <strong>Time:</strong> ${timestamp || new Date().toISOString()}</p>
-        </div>
-
-        <div style="background: rgba(140, 0, 6, 0.2); border-left: 4px solid #8C0006; border-radius: 4px; padding: 14px; margin-bottom: 20px;">
-          <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #94A3B8; margin-bottom: 6px;">Message Content</div>
-          <div style="color: #FFFFFF; line-height: 1.6; white-space: pre-wrap; font-size: 14px;">${message}</div>
-        </div>
-
-        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; font-size: 12px; color: #94A3B8; text-align: center;">
-          Click "Reply" in your email client to respond directly to <strong>${email}</strong>.
-        </div>
-      </div>
-    `,
   };
 
   try {
