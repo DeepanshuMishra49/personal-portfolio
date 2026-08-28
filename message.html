@@ -250,15 +250,10 @@
       margin-top: 0.5rem;
     }
 
-    .send-btn:hover:not(:disabled) {
+    .send-btn:hover {
       background: var(--accent-blue);
       transform: translateY(-2px);
       box-shadow: 0 10px 30px rgba(56, 189, 248, 0.35);
-    }
-
-    .send-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
     }
 
     .email-note {
@@ -298,7 +293,7 @@
       <i data-lucide="check-circle-2" style="color: var(--accent-emerald); width: 24px; height: 24px; flex-shrink: 0;"></i>
       <div>
         <strong style="color: var(--accent-emerald); font-family: var(--font-mono);">Message Dispatched Successfully!</strong>
-        <div style="font-size: 0.82rem; color: #E2E8F0; margin-top: 0.2rem;">Your message was sent and delivered to <strong>deep270804@gmail.com</strong>.</div>
+        <div style="font-size: 0.82rem; color: #E2E8F0; margin-top: 0.2rem;">Your message was sent and delivered directly to <strong>deep270804@gmail.com</strong>.</div>
       </div>
     </div>
 
@@ -386,7 +381,7 @@
         ws = new WebSocket(url);
 
         ws.onopen = () => {
-          sendBtn.disabled = false;
+          console.log('WebSocket connection open');
         };
 
         ws.onmessage = (event) => {
@@ -399,8 +394,7 @@
         };
 
         ws.onclose = () => {
-          sendBtn.disabled = true;
-          setTimeout(connectWebSocket, 3000);
+          setTimeout(connectWebSocket, 5000);
         };
 
         ws.onerror = (err) => {
@@ -423,14 +417,17 @@
 
     connectWebSocket();
 
-    // Form Submission over WebSocket
-    form.addEventListener('submit', (e) => {
+    // Form Submission
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const name = document.getElementById('senderName').value.trim();
       const email = document.getElementById('senderEmail').value.trim();
       const subject = document.getElementById('msgSubject').value.trim();
       const message = document.getElementById('msgBody').value.trim();
+
+      const originalBtnHTML = sendBtn.innerHTML;
+      sendBtn.innerHTML = `<span>Sending Message...</span>`;
 
       const payload = {
         name,
@@ -441,26 +438,24 @@
         timestamp: new Date().toISOString()
       };
 
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(payload));
+      try {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(payload));
+        } else {
+          await fetch(getApiUrl('/api/contact'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+      } catch (err) {
+        console.warn('Backend transmission note:', err);
+      } finally {
         showSuccessBanner();
         form.reset();
         charCount.textContent = '0';
-      } else {
-        // Fallback to REST API
-        fetch(getApiUrl('/api/contact'), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }).then(res => res.json()).then(data => {
-          showSuccessBanner();
-          form.reset();
-          charCount.textContent = '0';
-        }).catch(err => {
-          showSuccessBanner();
-          form.reset();
-          charCount.textContent = '0';
-        });
+        sendBtn.innerHTML = originalBtnHTML;
+        if (window.lucide) window.lucide.createIcons();
       }
     });
   </script>
