@@ -100,7 +100,6 @@ document.querySelector('#app').innerHTML = `
         <button class="cmd-hint-chip" data-cmd="resume">resume</button>
         <button class="cmd-hint-chip" data-cmd="message">message</button>
         <button class="cmd-hint-chip" data-cmd="contact">contact</button>
-        <button class="cmd-hint-chip" data-cmd="status">status</button>
         <button class="cmd-hint-chip" data-cmd="exit">exit</button>
         <button class="cmd-hint-chip" data-cmd="clear">clear</button>
       </div>
@@ -414,9 +413,8 @@ async function openTerminal() {
   createCode("meet", "Schedule some time to meet");
   createCode("social -a", "All my social networks.");
   createCode("resume", "To see my Resume");
-  createCode("message", "Send real-time message via WebSocket 💬");
+  createCode("message", "Send a direct message to Deepanshu 💬");
   createCode("contact", "Contact me 🤝");
-  createCode("status", "Cloud Node & Spring Boot health status ⚡");
   createCode("exit", "To exit from the server");
 
   await delay(200);
@@ -441,9 +439,8 @@ async function executeCommand(rawVal) {
     createCode("meet", "Schedule some time to meet");
     createCode("social -a", "All my social networks.");
     createCode("resume", "To see my Resume");
-    createCode("message", "Send real-time message via WebSocket 💬");
+    createCode("message", "Send a direct message to Deepanshu 💬");
     createCode("contact", "Contact me 🤝");
-    createCode("status", "Cloud Node & Spring Boot health status ⚡");
     createCode("exit", "To exit from the server");
     createCode("clear", "Clean the terminal.");
   } 
@@ -600,16 +597,15 @@ async function executeCommand(rawVal) {
     createText(`
       <div class="term-rich-box" style="border-left: 3px solid #38BDF8;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-          <span style="color: #38BDF8; font-weight: bold; font-size: 0.95rem;">💬 Real-Time WebSocket Message</span>
-          <span style="color: #34D399; font-size: 0.75rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 999px; padding: 0.15rem 0.6rem;">● Spring Boot Gateway</span>
+          <span style="color: #38BDF8; font-weight: bold; font-size: 0.95rem;">💬 Deepanshu's Messenger</span>
         </div>
         <p style="color: #E2E8F0; font-size: 0.85rem; margin-bottom: 0.75rem; line-height: 1.5;">
-          Redirecting to real-time message dispatch workspace in a new tab...
+          Redirecting to messaging workspace in a new tab...
         </p>
         <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;">
           <a href="/message.html" target="_blank" rel="noopener noreferrer" class="term-link-btn" style="background: #38BDF8; color: #000000; font-weight: 700; margin-top: 0;">
             <i data-lucide="message-square"></i>
-            <span>Open Messaging Workspace</span>
+            <span>Open Deepanshu's Messenger</span>
             <i data-lucide="arrow-up-right"></i>
           </a>
         </div>
