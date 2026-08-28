@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Deepanshu Mishra - DevOps & Cloud Engineer Portfolio. Architecting resilient cloud infrastructure, automated CI/CD pipelines, and full-stack observability." />
+    <title>Deepanshu Mishra — DevOps & Cloud Engineer</title>
+    
+    <!-- Google Fonts: Syne (Editorial Display) & Space Grotesk / Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800;900&display=swap" rel="stylesheet" />
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <!-- Noise Texture Overlay for Editorial Grain -->
+    <div class="noise-overlay" aria-hidden="true"></div>
+
+    <!-- Multilingual Greeting Preloader (Award-Winning Style) -->
+    <div id="preloader" class="preloader-overlay">
+      <div class="preloader-content greeting-mode">
+        <div class="greeting-container">
+          <span class="greeting-dot"></span>
+          <h1 class="greeting-text" id="greetingText">Hello</h1>
+        </div>
+        <div class="preloader-bar-wrap">
+          <div class="preloader-bar" id="preloaderBar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Precision Glass Follower Cursor -->
+    <div class="custom-cursor" id="customCursor" aria-hidden="true">
+      <div class="cursor-dot"></div>
+      <div class="cursor-ring"></div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastNotification" class="toast-container" role="alert" aria-live="polite"></div>
+
+    <div id="app"></div>
+
+    <!-- Contact Modal / Slide-out Drawer (Huyml Style) -->
+    <div id="contactDrawer" class="drawer-overlay" aria-hidden="true">
+      <div class="drawer-backdrop" id="closeContactBackdrop"></div>
+      <div class="drawer-panel">
+        <div class="drawer-header">
+          <div class="drawer-title-group">
+            <span class="drawer-subtitle">GET IN TOUCH</span>
+            <h2 class="drawer-title">Come say hi</h2>
+          </div>
+          <button class="drawer-close-btn" id="closeContactBtn" aria-label="Close Contact Drawer">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+
+        <div class="drawer-body">
+          <div class="contact-card">
+            <span class="contact-card-label">Drop me a line</span>
+            <div class="contact-email-row">
+              <a href="mailto:deep270804@gmail.com" class="contact-email-link">deep270804@gmail.com</a>
+              <button class="copy-action-btn" id="copyEmailBtn" title="Copy Email">
+                <i data-lucide="copy"></i>
+                <span class="copy-tooltip">Copy</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <span class="contact-card-label">Phone & WhatsApp</span>
+            <div class="contact-email-row">
+              <a href="tel:+918287123707" class="contact-email-link">+91 8287123707</a>
+              <button class="copy-action-btn" id="copyPhoneBtn" title="Copy Phone Number">
+                <i data-lucide="copy"></i>
+                <span class="copy-tooltip">Copy</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="contact-links-grid">
+            <a href="https://linkedin.com/in/heydeepanshu" target="_blank" rel="noopener noreferrer" class="contact-nav-item">
+              <div class="contact-nav-info">
+                <span class="nav-item-sub">Professional Network</span>
+                <span class="nav-item-main">LinkedIn</span>
+              </div>
+              <i data-lucide="arrow-up-right"></i>
+            </a>
+
+            <a href="https://github.com/DeepanshuMishra49" target="_blank" rel="noopener noreferrer" class="contact-nav-item">
+              <div class="contact-nav-info">
+                <span class="nav-item-sub">Code Repositories & IaC</span>
+                <span class="nav-item-main">GitHub</span>
+              </div>
+              <i data-lucide="arrow-up-right"></i>
+            </a>
+
+            <a href="https://x.com/Deepanshu270804" target="_blank" rel="noopener noreferrer" class="contact-nav-item">
+              <div class="contact-nav-info">
+                <span class="nav-item-sub">Thoughts & Tech Updates</span>
+                <span class="nav-item-main">X (Twitter)</span>
+              </div>
+              <i data-lucide="arrow-up-right"></i>
+            </a>
+
+            <a href="https://www.instagram.com/deepanshu._.27/" target="_blank" rel="noopener noreferrer" class="contact-nav-item">
+              <div class="contact-nav-info">
+                <span class="nav-item-sub">Personal & Life</span>
+                <span class="nav-item-main">Instagram</span>
+              </div>
+              <i data-lucide="arrow-up-right"></i>
+            </a>
+
+            <a href="mailto:deep270804@gmail.com" class="contact-nav-item">
+              <div class="contact-nav-info">
+                <span class="nav-item-sub">Fast Response</span>
+                <span class="nav-item-main">Send Email</span>
+              </div>
+              <i data-lucide="arrow-up-right"></i>
+            </a>
+          </div>
+
+          <div class="contact-card" style="margin-top: 0.5rem;">
+            <span class="contact-card-label">Send Direct Message</span>
+            <form id="contactForm" style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem;">
+              <input type="text" id="senderName" placeholder="Your Name" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 0.5rem 0.8rem; color: #fff; font-family: inherit; font-size: 0.85rem; outline: none;" required />
+              <input type="email" id="senderEmail" placeholder="Your Email (e.g. recruiter@company.com)" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 0.5rem 0.8rem; color: #fff; font-family: inherit; font-size: 0.85rem; outline: none;" required />
+              <textarea id="senderMessage" rows="3" placeholder="Your message or project opportunity..." style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 0.5rem 0.8rem; color: #fff; font-family: inherit; font-size: 0.85rem; resize: vertical; outline: none;" required></textarea>
+              <button type="submit" class="primary-pill-btn" style="padding: 0.6rem 1rem; font-size: 0.85rem; width: 100%;">
+                <i data-lucide="send"></i>
+                <span>Send Message</span>
+              </button>
+            </form>
+          </div>
+
+          <div class="drawer-resume-cta" style="margin-top: 1rem;">
+            <button class="primary-pill-btn full-width" id="downloadResumeBtn">
+              <i data-lucide="file-text"></i>
+              <span>View & Save Resume</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Printable Resume for Print Dialog (Matched to PDF) -->
+    <div id="printableResume" aria-hidden="true">
+      <div class="print-name-title">DEEPANSHU MISHRA</div>
+      <div class="print-contact-row">
+        <span>✉ deep270804@gmail.com</span>
+        <span>🔗 linkedin.com/in/heydeepanshu</span>
+        <span>🐙 github.com/DeepanshuMishra49</span>
+        <span>📞 +918287123707</span>
+      </div>
+
+      <div class="print-section">
+        <div class="print-sec-title">Education</div>
+        <div class="print-entry-header">
+          <span>KIET Group Of Institutions</span>
+          <span>Ghaziabad</span>
+        </div>
+        <div class="print-entry-sub">
+          <span>Bachelor of Technology in Computer Science Engineering</span>
+          <span>November 2021 - August 2025</span>
+        </div>
+      </div>
+
+      <div class="print-section">
+        <div class="print-sec-title">Experience</div>
+        <div class="print-entry-header">
+          <span>TECHNOHUNK</span>
+          <span>Ghaziabad</span>
+        </div>
+        <div class="print-entry-sub">
+          <span>DevOps & Cloud Engineer</span>
+          <span>January 2026 - Present</span>
+        </div>
+        <ul class="print-bullets">
+          <li>Owned and managed cloud infrastructure on AWS (EC2, VPC, RDS, S3) using Terraform, codifying infrastructure as reusable modules to keep dev/staging/prod environments consistent and cutting environment provisioning time by 70%.</li>
+          <li>Containerized 10+ microservices using Docker, reducing deployment time by 30% and environment inconsistencies by 25% through optimized Dockerfiles and Docker Compose.</li>
+          <li>Implemented observability using Prometheus, Grafana, Grafana Loki, and Jaeger, unifying metrics, logs, and distributed traces, and reducing Mean Time To Detect (MTTD) by 40% through threshold-based alerting and real-time dashboards.</li>
+          <li>Collaborated with development teams to troubleshoot infrastructure and pipeline issues in staging/production, improving overall deployment reliability across AWS-hosted services.</li>
+        </ul>
+      </div>
+
+      <div class="print-section">
+        <div class="print-sec-title">Projects</div>
+        <div class="print-entry-header">
+          <span>Projects at Technohunk (Microservices Hospital Management System)</span>
+        </div>
+        <ul class="print-bullets">
+          <li>Owned cloud infrastructure and CI/CD for a microservices-based Hospital Management System, provisioning AWS resources (EC2, VPC, RDS) with Terraform and building automated pipelines across GitLab CI/CD and Jenkins for build, test, and deployment.</li>
+          <li>Reduced deployment time by 40% and environment provisioning from days to under 30 minutes by codifying infrastructure as Terraform modules and automating release workflows end-to-end.</li>
+        </ul>
+
+        <div class="print-entry-header" style="margin-top: 4pt;">
+          <span>3-Tier Cloud Infrastructure on AWS using Terraform</span>
+        </div>
+        <ul class="print-bullets">
+          <li>Designed and provisioned a highly available 3-tier architecture on AWS using Terraform — custom VPC across multiple AZs, an ALB-fronted EC2 and a Multi-AZ RDS database tier.</li>
+          <li>Achieved 99.95% uptime with automated failover and cut full environment provisioning to under 20 minutes via a single terraform apply, versus days of manual setup.</li>
+        </ul>
+
+        <div class="print-entry-header" style="margin-top: 4pt;">
+          <span>Full-Stack Observability Platform using OpenTelemetry, Prometheus, Loki, Jaeger & Grafana</span>
+        </div>
+        <ul class="print-bullets">
+          <li>Instrumented services with OpenTelemetry for unified metrics, logs, and distributed tracing, backed by Prometheus, Grafana Loki, and Jaeger, all visualized through Grafana dashboards.</li>
+          <li>Cut Mean Time To Detect (MTTD) by 45% and root-cause analysis time by 50% by correlating traces, logs, and metrics instead of debugging each in isolation.</li>
+        </ul>
+
+        <div class="print-entry-header" style="margin-top: 4pt;">
+          <span>Application Deployment Automation using Ansible</span>
+        </div>
+        <ul class="print-bullets">
+          <li>Built a 4-role Ansible automation suite that provisions a bare Ubuntu server into a fully running, health-checked production environment — Java 21, Docker and a containerized Spring Boot + MySQL app — via a single ansible-playbook command.</li>
+          <li>Cut manual server setup time by 90% and eliminated inventory drift on autoscaled fleets using AWS EC2 dynamic inventory with tag-based filtering.</li>
+        </ul>
+      </div>
+
+      <div class="print-section">
+        <div class="print-sec-title">Technical Skills</div>
+        <div class="print-skills-list">
+          <div><strong>Languages:</strong> Python, JAVA, SQL</div>
+          <div><strong>AWS Services:</strong> EC2, S3, IAM, Lambda, DynamoDB, RDS, VPC, Route 53, EBS, API Gateway, ECR, CloudWatch</div>
+          <div><strong>CI/CD:</strong> Jenkins, GitHub Actions, Gitlab CICD</div>
+          <div><strong>Infrastructure as Code & Configuration Management:</strong> Terraform, Ansible</div>
+          <div><strong>Containerization & Monitoring:</strong> Kubernetes(Basics), Docker</div>
+          <div><strong>OS & Tools:</strong> Linux, Git, Github, Gitlab, Nginx, Postman, MongoDB, Spring Boot</div>
+          <div><strong>Observability:</strong> Prometheus, Loki, Jaegar, Opentelemetry, Grafana, Alert Manager</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deepanshu's Messenger</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    :root {
+      --bg-dark: #080606;
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --bg-card-hover: rgba(255, 255, 255, 0.08);
+      --bg-crimson: #8C0006;
+      --text-white: #FFFFFF;
+      --text-muted: rgba(255, 255, 255, 0.5);
+      --accent-emerald: #10B981;
+      --accent-blue: #38BDF8;
+      --accent-amber: #F59E0B;
+      --border-subtle: rgba(255, 255, 255, 0.12);
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow-x: hidden;
+      background-image: radial-gradient(circle at 50% 0%, rgba(140, 0, 6, 0.35) 0%, rgba(8, 6, 6, 1) 80%);
+    }
+
+    /* Top Navigation */
+    .msg-header {
+      width: 100%;
+      max-width: 800px;
+      padding: 1.5rem 1.5rem 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .back-link {
+      color: var(--text-white);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      padding: 0.45rem 0.95rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .back-link:hover {
+      background: #FFFFFF;
+      color: #000000;
+    }
+
+    /* Main Container */
+    .msg-main {
+      width: 100%;
+      max-width: 680px;
+      padding: 2.5rem 1.5rem 4rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .hero-title-group {
+      text-align: center;
+    }
+
+    .hero-title-group h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 0.6rem;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #FFFFFF 0%, #E2E8F0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-title-group p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    /* Success Alert Banner */
+    .success-alert {
+      display: none;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #FFFFFF;
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.88rem;
+      line-height: 1.4;
+      animation: alertSlide 0.3s ease;
+    }
+
+    .success-alert.show {
+      display: flex;
+    }
+
+    @keyframes alertSlide {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Message Form Card */
+    .msg-card {
+      background: rgba(18, 12, 13, 0.9);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 2.25rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(140, 0, 6, 0.2);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .recipient-badge {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 14px;
+      padding: 0.85rem 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .recip-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+    }
+
+    .recip-email {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-input, .form-textarea {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 0.85rem 1.1rem;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 0.92rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .char-count {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .send-btn {
+      background: #FFFFFF;
+      color: #000000;
+      border: none;
+      border-radius: 999px;
+      padding: 1rem 1.75rem;
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: all 0.2s ease;
+      margin-top: 0.5rem;
+    }
+
+    .send-btn:hover:not(:disabled) {
+      background: var(--accent-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(56, 189, 248, 0.35);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .email-note {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="msg-header">
+    <div class="brand-group">
+      <span class="brand-name">DEEPANSHU MISHRA</span>
+    </div>
+    <a href="/" class="back-link">
+      <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i>
+      <span>Portfolio Terminal</span>
+    </a>
+  </header>
+
+  <!-- Content -->
+  <main class="msg-main">
+    <div class="hero-title-group">
+      <h1>Deepanshu's Messenger</h1>
+      <p>Send a direct message to Deepanshu Mishra. Delivered instantly to inbox & backend.</p>
+    </div>
+
+    <!-- Success Confirmation Banner -->
+    <div class="success-alert" id="successAlert">
+      <i data-lucide="check-circle-2" style="color: var(--accent-emerald); width: 24px; height: 24px; flex-shrink: 0;"></i>
+      <div>
+        <strong style="color: var(--accent-emerald); font-family: var(--font-mono);">Message Dispatched Successfully!</strong>
+        <div style="font-size: 0.82rem; color: #E2E8F0; margin-top: 0.2rem;">Your message was sent and delivered to <strong>deep270804@gmail.com</strong>.</div>
+      </div>
+    </div>
+
+    <!-- Composer Card -->
+    <section class="msg-card">
+      <div class="recipient-badge">
+        <div>
+          <div class="recip-title">Direct Channel &bull; Deepanshu Mishra</div>
+          <div class="recip-email">deep270804@gmail.com &bull; DevOps & Cloud Engineer</div>
+        </div>
+        <i data-lucide="shield-check" style="color: var(--accent-blue); width: 22px; height: 22px;"></i>
+      </div>
+
+      <form id="wsMessageForm">
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label class="form-label" for="senderName">Your Name</label>
+          <input type="text" id="senderName" class="form-input" placeholder="e.g. Alex (Engineering Recruiter / Lead)" required />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label class="form-label" for="senderEmail">Your Email</label>
+          <input type="email" id="senderEmail" class="form-input" placeholder="e.g. alex@company.com" required />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label class="form-label" for="msgSubject">Subject / Opportunity</label>
+          <input type="text" id="msgSubject" class="form-input" placeholder="e.g. DevOps Opportunity / Cloud Architecture Project" required />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <label class="form-label" for="msgBody">Message</label>
+          <textarea id="msgBody" class="form-textarea" placeholder="Write your message here..." maxlength="1000" required></textarea>
+          <div class="char-count"><span id="charCount">0</span> / 1000</div>
+        </div>
+
+        <button type="submit" class="send-btn" id="sendBtn" style="width: 100%;">
+          <i data-lucide="send" style="width: 17px; height: 17px;"></i>
+          <span>Send Message</span>
+        </button>
+
+        <div class="email-note" style="margin-top: 0.85rem;">
+          <i data-lucide="mail" style="width: 13px; height: 13px;"></i>
+          <span>Dispatched directly to deep270804@gmail.com</span>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    if (window.lucide) window.lucide.createIcons();
+
+    // Character counter
+    const msgBody = document.getElementById('msgBody');
+    const charCount = document.getElementById('charCount');
+    msgBody.addEventListener('input', () => {
+      charCount.textContent = msgBody.value.length;
+    });
+
+    // WebSocket Management
+    let ws = null;
+    const successAlert = document.getElementById('successAlert');
+    const sendBtn = document.getElementById('sendBtn');
+    const form = document.getElementById('wsMessageForm');
+
+    function getWebSocketUrl() {
+      const loc = window.location;
+      if (loc.port === '5173') {
+        return 'ws://localhost:8085/ws/messages';
+      }
+      const proto = loc.protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${proto}//${loc.host}/ws/messages`;
+    }
+
+    function connectWebSocket() {
+      const url = getWebSocketUrl();
+      console.log('Connecting to WebSocket at:', url);
+
+      try {
+        ws = new WebSocket(url);
+
+        ws.onopen = () => {
+          sendBtn.disabled = false;
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'ACK') {
+              showSuccessBanner();
+            }
+          } catch (e) {}
+        };
+
+        ws.onclose = () => {
+          sendBtn.disabled = true;
+          setTimeout(connectWebSocket, 3000);
+        };
+
+        ws.onerror = (err) => {
+          console.error('WebSocket error:', err);
+        };
+      } catch (err) {
+        console.error('WebSocket connection failed:', err);
+      }
+    }
+
+    function showSuccessBanner() {
+      successAlert.classList.add('show');
+      if (window.lucide) window.lucide.createIcons();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      setTimeout(() => {
+        successAlert.classList.remove('show');
+      }, 7000);
+    }
+
+    connectWebSocket();
+
+    // Form Submission over WebSocket
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('senderName').value.trim();
+      const email = document.getElementById('senderEmail').value.trim();
+      const subject = document.getElementById('msgSubject').value.trim();
+      const message = document.getElementById('msgBody').value.trim();
+
+      const payload = {
+        name,
+        email,
+        subject,
+        message,
+        type: 'CHAT',
+        timestamp: new Date().toISOString()
+      };
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(payload));
+        showSuccessBanner();
+        form.reset();
+        charCount.textContent = '0';
+      } else {
+        // Fallback to REST API
+        fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(res => res.json()).then(data => {
+          showSuccessBanner();
+          form.reset();
+          charCount.textContent = '0';
+        });
+      }
+    });
+  </script>
+</body>
+</html>
