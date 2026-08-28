@@ -365,11 +365,17 @@
 
     function getWebSocketUrl() {
       const loc = window.location;
-      if (loc.port === '5173') {
+      if (loc.hostname === 'localhost' || loc.hostname === '127.0.0.1') {
         return 'ws://localhost:8085/ws/messages';
       }
-      const proto = loc.protocol === 'https:' ? 'wss:' : 'ws:';
-      return `${proto}//${loc.host}/ws/messages`;
+      return 'wss://deepanshuportfolio-7l9zxi9t.b4a.run/ws/messages';
+    }
+
+    function getApiUrl(endpoint) {
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return endpoint;
+      }
+      return `https://deepanshuportfolio-7l9zxi9t.b4a.run${endpoint}`;
     }
 
     function connectWebSocket() {
@@ -442,11 +448,15 @@
         charCount.textContent = '0';
       } else {
         // Fallback to REST API
-        fetch('/api/contact', {
+        fetch(getApiUrl('/api/contact'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         }).then(res => res.json()).then(data => {
+          showSuccessBanner();
+          form.reset();
+          charCount.textContent = '0';
+        }).catch(err => {
           showSuccessBanner();
           form.reset();
           charCount.textContent = '0';
