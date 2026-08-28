@@ -1,0 +1,18 @@
+{
+  "name": "portfolio-backend",
+  "version": "1.0.0",
+  "description": "Deepanshu Mishra Portfolio Node.js WebSocket & Email Backend",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "nodemailer": "^6.9.13",
+    "ws": "^8.16.0"
+  }
+}
