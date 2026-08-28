@@ -101,6 +101,16 @@ public class ApiController {
                     .body(resource);
         }
 
+        try {
+            org.springframework.core.io.ClassPathResource classPathResource = new org.springframework.core.io.ClassPathResource("static/resume.pdf");
+            if (classPathResource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_PDF)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"Resume-Deepanshu-Mishra.pdf\"")
+                        .body(classPathResource);
+            }
+        } catch (Exception ignored) {}
+
         return ResponseEntity.notFound().build();
     }
 }
