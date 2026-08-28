@@ -269,9 +269,7 @@ if (contactForm) {
       submitBtn.innerHTML = `<span>Sending...</span>`;
     }
 
-    const apiUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? '/api/contact'
-      : 'https://deepanshuportfolio-7l9zxi9t.b4a.run/api/contact';
+    const apiUrl = '/api/contact';
 
     try {
       const res = await fetch(apiUrl, {

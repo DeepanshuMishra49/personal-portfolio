@@ -367,10 +367,7 @@
     }
 
     function getApiUrl(endpoint) {
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        return endpoint;
-      }
-      return `https://deepanshuportfolio-7l9zxi9t.b4a.run${endpoint}`;
+      return endpoint;
     }
 
     function connectWebSocket() {
