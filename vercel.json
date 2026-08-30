@@ -2,13 +2,16 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "proxy": {
+    "entrypoint": "middleware.js"
+  },
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive, noimageindex, nosnippet, noai, noimageai"
+          "value": "noai, noimageai"
         },
         {
           "key": "X-Content-Type-Options",
