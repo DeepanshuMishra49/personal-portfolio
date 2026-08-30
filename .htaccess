@@ -1,0 +1,27 @@
+# ==============================================================================
+# Apache Anti-Bot, Anti-AI & Security Directives
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Block empty User-Agent
+    RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
+
+    # 2. Block AI Crawlers and Scraper User-Agents
+    RewriteCond %{HTTP_USER_AGENT} (GPTBot|ChatGPT-User|ClaudeBot|anthropic-ai|Claude-Web|CCBot|Google-Extended|Bytespider|Applebot-Extended|PerplexityBot|YouBot|cohere-ai|FacebookBot|Meta-ExternalAgent|Diffbot|ImagesiftBot|magpie-crawler|Scrapy|Wget|curl|Python|aiohttp|httpx|Playwright|Puppeteer|Selenium) [NC]
+    RewriteRule .* - [F,L]
+
+    # 3. Block Requests Missing Accept-Language (Excluding static assets)
+    RewriteCond %{REQUEST_URI} !\.(css|js|png|jpg|jpeg|gif|svg|ico|woff2?|pdf|txt)$ [NC]
+    RewriteCond %{HTTP:Accept-Language} ^$
+    RewriteRule .* - [F,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Anti-AI & Crawling Restrictions
+    Header always set X-Robots-Tag "noindex, nofollow, noarchive, noimageindex, nosnippet, noai, noimageai"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

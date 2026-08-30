@@ -17,9 +17,168 @@ const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 8085;
 
-// Middleware
+// ==========================================
+// LAYER 2 & 5: Security & Anti-Bot Middleware
+// ==========================================
+
+// Global Anti-AI / Anti-Scraper Response Headers
+app.use((req, res, next) => {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, noimageindex, nosnippet, noai, noimageai');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  next();
+});
+
+// Known Bot / Scraper Signatures
+const KNOWN_BOT_PATTERNS = [
+  'gptbot',
+  'chatgpt',
+  'claudebot',
+  'anthropic',
+  'bytespider',
+  'ccbot',
+  'google-extended',
+  'applebot-extended',
+  'perplexity',
+  'youbot',
+  'cohere',
+  'diffbot',
+  'facebookbot',
+  'meta-externalagent',
+  'magpie-crawler',
+  'imagesiftbot',
+  'omgilibot',
+  'meltwater',
+  'ahrefs',
+  'semrush',
+  'scrapy',
+  'python-requests',
+  'aiohttp',
+  'httpx',
+  'wget',
+  'curl',
+  'httpclient',
+  'headless',
+  'playwright',
+  'puppeteer',
+  'selenium',
+  'postmanruntime'
+];
+
+// Anti-Bot Request Validation Middleware
+const antiBotValidator = (req, res, next) => {
+  // Allow public robots.txt and ai.txt to be read by crawlers so they see disallow directives
+  if (req.path === '/robots.txt' || req.path === '/ai.txt') {
+    return next();
+  }
+
+  const userAgent = (req.get('User-Agent') || '').trim();
+  const acceptLang = req.get('Accept-Language');
+
+  // 1. Block empty or suspiciously short User-Agent
+  if (!userAgent || userAgent.length < 10) {
+    return res.status(403).json({
+      error: 'Access Denied',
+      message: 'Forbidden: Missing or invalid client User-Agent signature.'
+    });
+  }
+
+  // 2. Block known AI scrapers and automated tools
+  const uaLower = userAgent.toLowerCase();
+  const matchedBot = KNOWN_BOT_PATTERNS.find(pattern => uaLower.includes(pattern));
+  if (matchedBot) {
+    return res.status(403).json({
+      error: 'Access Denied',
+      message: `Forbidden: Automated crawler prohibited (${matchedBot}).`
+    });
+  }
+
+  // 3. Block missing Accept-Language for standard HTML browsing requests
+  const isHtmlRequest = (req.get('Accept') || '').includes('text/html');
+  if (isHtmlRequest && !acceptLang) {
+    return res.status(403).json({
+      error: 'Access Denied',
+      message: 'Forbidden: Missing standard browser headers.'
+    });
+  }
+
+  next();
+};
+
+app.use(antiBotValidator);
+
+// ==========================================
+// LAYER 4: In-Memory Sliding Window Rate Limiting
+// ==========================================
+
+const rateLimitStores = {
+  general: new Map(),
+  api: new Map(),
+};
+
+function createRateLimiter(zone, limit, windowMs = 60000) {
+  const store = rateLimitStores[zone];
+
+  return (req, res, next) => {
+    // Get client IP (supports standard proxy headers)
+    const clientIp = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || '127.0.0.1';
+    const now = Date.now();
+    const clientRecord = store.get(clientIp);
+
+    if (!clientRecord || (now - clientRecord.windowStart) > windowMs) {
+      store.set(clientIp, { count: 1, windowStart: now });
+      return next();
+    }
+
+    if (clientRecord.count >= limit) {
+      const retryAfterSeconds = Math.ceil((clientRecord.windowStart + windowMs - now) / 1000);
+      res.setHeader('Retry-After', retryAfterSeconds.toString());
+      res.setHeader('X-RateLimit-Limit', limit);
+      res.setHeader('X-RateLimit-Remaining', 0);
+      return res.status(429).json({
+        error: 'Too Many Requests',
+        message: `Rate limit of ${limit} req/min exceeded. Please retry in ${retryAfterSeconds} seconds.`,
+        retryAfter: retryAfterSeconds
+      });
+    }
+
+    clientRecord.count += 1;
+    res.setHeader('X-RateLimit-Limit', limit);
+    res.setHeader('X-RateLimit-Remaining', Math.max(0, limit - clientRecord.count));
+    next();
+  };
+}
+
+// Clean up stale rate limiter records every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const store of Object.values(rateLimitStores)) {
+    for (const [ip, entry] of store.entries()) {
+      if (now - entry.windowStart > 120000) {
+        store.delete(ip);
+      }
+    }
+  }
+}, 300000);
+
+const generalLimiter = createRateLimiter('general', 30, 60000); // 30 req/min
+const apiLimiter = createRateLimiter('api', 5, 60000);          // 5 req/min for APIs
+
+// Apply rate limits
+app.use('/api/contact', apiLimiter);
+app.use('/api/messages', apiLimiter);
+app.use(generalLimiter);
+
+// Core Middlewares
 app.use(cors({ origin: '*' }));
 app.use(express.json());
+
+// Serve static assets from public/ and dist/
+app.use(express.static(path.join(__dirname, 'public')));
+if (fs.existsSync(path.join(__dirname, 'dist'))) {
+  app.use(express.static(path.join(__dirname, 'dist')));
+}
 
 // In-Memory Messages Store
 const messageHistory = [];
@@ -91,6 +250,7 @@ app.get('/api/health', (req, res) => {
     heapMemoryMB: memUsage,
     activeWebSocketConnections: activeWsClients.size,
     totalMessagesReceived: messageHistory.length,
+    securityGuard: 'ACTIVE (RateLimiter + AntiBot + AntiAI)',
     cloudStack: ['Node.js', 'Express', 'WebSocket (ws)', 'Nodemailer', 'Docker', 'AWS EC2'],
     timestamp: new Date().toISOString(),
   });
@@ -105,13 +265,17 @@ app.get('/api/messages', (req, res) => {
 
 app.post('/api/contact', async (req, res) => {
   const { name, email, subject, message } = req.body;
+  if (!email || !message) {
+    return res.status(400).json({ error: 'Email and message are required.' });
+  }
+
   const id = 'msg_' + Math.random().toString(36).substring(2, 10);
   const timestamp = new Date().toISOString();
 
-  const record = { id, name, email, subject, message, type: 'REST', status: 'DELIVERED', timestamp };
+  const record = { id, name: name || 'Anonymous', email, subject: subject || 'Portfolio Contact', message, type: 'REST', status: 'DELIVERED', timestamp };
   messageHistory.push(record);
 
-  console.log(`📬 [REST API] Message from ${name} (${email}): ${subject}`);
+  console.log(`📬 [REST API] Message from ${record.name} (${email}): ${record.subject}`);
 
   // Send Email in background
   sendEmailNotification(record).catch(console.error);
@@ -146,7 +310,15 @@ app.get('/resume.pdf', (req, res) => {
 // WebSocket Server attached to HTTP server
 const wss = new WebSocketServer({ server, path: '/ws/messages' });
 
-wss.on('connection', (ws) => {
+wss.on('connection', (ws, req) => {
+  // Validate User-Agent for WebSocket handshakes
+  const ua = req.headers['user-agent'] || '';
+  const uaLower = ua.toLowerCase();
+  if (KNOWN_BOT_PATTERNS.some(b => uaLower.includes(b))) {
+    ws.close(1008, 'Automated scraper disallowed');
+    return;
+  }
+
   activeWsClients.add(ws);
   console.log(`🟢 [WebSocket] Client connected. Total active: ${activeWsClients.size}`);
 
@@ -221,5 +393,6 @@ wss.on('connection', (ws) => {
 // Start Server
 server.listen(PORT, () => {
   console.log(`🚀 [Node.js Backend] Server & WebSocket running on port ${PORT}`);
+  console.log(`🛡️  [Security Engine] Rate Limiting & Anti-Scraper Validation Active`);
   console.log(`📧 [Email Target] Dispatching incoming messages to: ${recipientEmail}`);
 });
