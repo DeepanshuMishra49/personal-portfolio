@@ -77,11 +77,6 @@ export default function middleware(request) {
     );
   }
 
-  // Allow regular browser traffic and legitimate search engines (Googlebot, Bingbot)
-  return new Response(null, {
-    headers: {
-      'x-middleware-next': '1',
-      'X-Robots-Tag': 'noai, noimageai',
-    },
-  });
+  // Allow regular browser traffic by returning undefined (passes through to static assets)
+  return undefined;
 }
