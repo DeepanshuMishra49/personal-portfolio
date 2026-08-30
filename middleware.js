@@ -1,14 +1,14 @@
-// Vercel Edge Middleware — Advanced Anti-Bot & AI Crawler Protection
-// Runtime: Edge (runs globally at Vercel's CDN edge before static assets)
+// Vercel Proxy Middleware — Advanced Anti-Bot & AI Crawler Protection
+// Runtime: Node.js (required for proxy entrypoint)
 
 export const config = {
-  runtime: 'edge',
+  runtime: 'nodejs',
 };
 
 // ─── Blocked User-Agent Patterns ────────────────────────────────────────────
 const BLOCKED_UA_PATTERNS = [
   // ── Anthropic / Claude ──
-  'claudebot', 'anthropic-ai', 'claude-web', 'claude',
+  'claudebot', 'anthropic-ai', 'claude-web',
 
   // ── OpenAI / ChatGPT ──
   'gptbot', 'chatgpt-user', 'oai-searchbot',
@@ -36,37 +36,25 @@ const BLOCKED_UA_PATTERNS = [
   'scrapy', 'selenium', 'puppeteer', 'playwright',
 ];
 
-// ─── Suspicious Header Patterns ─────────────────────────────────────────────
-function hasSuspiciousHeaders(request) {
-  const ua = request.headers.get('user-agent') || '';
-
-  // No user-agent at all → likely a raw script
-  if (!ua || ua.length < 10) return true;
-
-  // Accept header missing or generic → likely not a real browser
-  const accept = request.headers.get('accept') || '';
-  if (!accept && request.method === 'GET') return true;
-
-  return false;
+// ─── Legitimate Search Engines (always allowed) ─────────────────────────────
+function isLegitimateSearchEngine(ua) {
+  const allowed = ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot', 'slurp'];
+  return allowed.some((engine) => ua.includes(engine));
 }
 
 // ─── Main Middleware ────────────────────────────────────────────────────────
 export default function middleware(request) {
   const url = new URL(request.url);
-  const pathname = url.pathname;
 
-  // Skip middleware for API routes (let serverless functions handle them)
-  if (pathname.startsWith('/api/')) {
+  // Skip middleware for API routes
+  if (url.pathname.startsWith('/api/')) {
     return;
   }
 
   const userAgent = (request.headers.get('user-agent') || '').toLowerCase();
 
-  // Layer 1: User-Agent pattern matching
+  // Layer 1: User-Agent pattern matching against known AI bots
   const uaBlocked = BLOCKED_UA_PATTERNS.some((pattern) => userAgent.includes(pattern));
-
-  // Layer 2: Suspicious header analysis
-  const headersSuspicious = hasSuspiciousHeaders(request);
 
   if (uaBlocked) {
     return new Response(
@@ -86,22 +74,15 @@ export default function middleware(request) {
     );
   }
 
-  if (headersSuspicious && !isLegitimateSearchEngine(userAgent)) {
+  // Layer 2: Block requests with missing or suspiciously short User-Agent
+  // (unless it's a legitimate search engine)
+  if ((!userAgent || userAgent.length < 10) && !isLegitimateSearchEngine(userAgent)) {
     return new Response('403 Forbidden', {
       status: 403,
-      headers: {
-        'Content-Type': 'text/plain',
-        'X-Blocked-Reason': 'suspicious-headers',
-      },
+      headers: { 'Content-Type': 'text/plain' },
     });
   }
 
-  // Pass through — return nothing so Vercel serves the static asset
+  // Pass through to static assets
   return;
-}
-
-// ─── Allow Legitimate Search Engines ────────────────────────────────────────
-function isLegitimateSearchEngine(ua) {
-  const allowed = ['googlebot', 'bingbot', 'yandexbot', 'duckduckbot', 'slurp'];
-  return allowed.some((engine) => ua.includes(engine));
 }
