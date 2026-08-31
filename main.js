@@ -358,7 +358,8 @@ function newLine() {
   terminalApp.appendChild(inputRow);
 
   const input = inputRow.querySelector("input");
-  input.focus();
+  // Use preventScroll so the browser viewport stays firmly at the top Hero section
+  input.focus({ preventScroll: true });
 
   input.addEventListener("keydown", async function (event) {
     if (event.key === "Enter") {
@@ -530,11 +531,11 @@ async function executeCommand(rawVal) {
         <div style="display: flex; flex-direction: column; gap: 0.6rem;">
           <a href="https://calendly.com/deep270804/new-meeting" target="_blank" rel="noopener noreferrer" class="term-link-btn" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); color: #FFFFFF; font-weight: 600; padding: 0.7rem 1rem; border-radius: 12px; justify-content: flex-start; gap: 0.6rem;" id="meetWorkBtn">
             <span style="font-size: 1.1rem;">📁</span>
-            <span>Work (Open-Source) Related  <span style="color: #94A3B8; font-size: 0.78rem;">( Click me 👆 )</span></span>
+            <span>Work Related  <span style="color: #94A3B8; font-size: 0.78rem;">( Click here 👆 )</span></span>
           </a>
           <a href="https://calendly.com/deep270804/request-service" target="_blank" rel="noopener noreferrer" class="term-link-btn" style="background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.3); color: #FFFFFF; font-weight: 600; padding: 0.7rem 1rem; border-radius: 12px; justify-content: flex-start; gap: 0.6rem;" id="meetServiceBtn">
             <span style="font-size: 1.1rem;">🤝</span>
-            <span>Request Service  <span style="color: #94A3B8; font-size: 0.78rem;">( Click me 👆 )</span></span>
+            <span>Request Service  <span style="color: #94A3B8; font-size: 0.78rem;">( Click here 👆 )</span></span>
           </a>
         </div>
       </div>
@@ -729,6 +730,7 @@ function runPreloader() {
       setTimeout(() => {
         preloader.classList.add('dismissed');
         document.body.classList.add('page-ready');
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
         setTimeout(() => {
           openTerminal();
         }, 500);
@@ -737,10 +739,20 @@ function runPreloader() {
   }, 260);
 }
 
+// Ensure scroll starts at the absolute top on reload
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+window.scrollTo(0, 0);
+
 // Start sequence on DOM ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', runPreloader);
+  document.addEventListener('DOMContentLoaded', () => {
+    window.scrollTo(0, 0);
+    runPreloader();
+  });
 } else {
+  window.scrollTo(0, 0);
   runPreloader();
 }
 
