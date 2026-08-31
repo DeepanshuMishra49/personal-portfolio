@@ -308,9 +308,7 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-/* =========================================================
-   KANISHKK-STYLE TERMINAL IMPLEMENTATION
-   ========================================================= */
+
 const terminalApp = document.querySelector("#terminalApp");
 
 function createText(text) {
@@ -411,12 +409,12 @@ async function openTerminal() {
   createText("<span style='color: #FBBF24;'>Starting the server...</span>");
   await delay(600);
   createText("<span style='color: #38BDF8;'>You can run several commands:</span>");
-  
+
   createCode("about me", "Who am i and what do i do.");
   createCode("ls", "See list of commands.");
   createCode("skills", "My Technical Skills & Arsenal.");
   createCode("projects", "My Projects and Architectures.");
-  createCode("meet", "Schedule some time to meet");
+  createCode("meet", "Schedule a meeting via Calendly 📅");
   createCode("social -a", "All my social networks.");
   createCode("resume", "To see my Resume");
   createCode("message", "Send a direct message to Deepanshu 💬");
@@ -442,14 +440,14 @@ async function executeCommand(rawVal) {
     createCode("ls", "See list of commands.");
     createCode("skills", "My Technical Skills & Arsenal.");
     createCode("projects", "My Projects and Architectures.");
-    createCode("meet", "Schedule some time to meet");
+    createCode("meet", "Schedule a meeting via Calendly 📅");
     createCode("social -a", "All my social networks.");
     createCode("resume", "To see my Resume");
     createCode("message", "Send a direct message to Deepanshu 💬");
     createCode("contact", "Contact me 🤝");
     createCode("exit", "To exit from the server");
     createCode("clear", "Clean the terminal.");
-  } 
+  }
   else if (lower === "about me" || lower === "about") {
     trueValue(value);
     createText(`
@@ -465,7 +463,7 @@ async function executeCommand(rawVal) {
         </p>
       </div>
     `);
-  } 
+  }
   else if (lower === "skills" || lower === "skill") {
     trueValue(value);
     createText(`
@@ -521,36 +519,28 @@ async function executeCommand(rawVal) {
   }
   else if (lower === "meet") {
     trueValue(value);
-    const calUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Discussion+with+Deepanshu+Mishra&details=DevOps,+Cloud+Architecture,+and+Project+Discussion+with+Deepanshu+Mishra+(deep270804@gmail.com)&add=deep270804@gmail.com";
     createText(`
       <div class="term-rich-box" style="border-left: 3px solid #38BDF8;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-          <span style="color: #38BDF8; font-weight: bold; font-size: 0.95rem;">📅 Google Calendar Meet</span>
-          <span style="color: #34D399; font-size: 0.75rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 999px; padding: 0.15rem 0.6rem;">● Connected</span>
+        <div style="margin-bottom: 0.75rem;">
+          <span style="color: #38BDF8; font-weight: bold; font-size: 0.95rem;">📅 Schedule a Meeting with Deepanshu</span>
         </div>
-        <p style="color: #E2E8F0; font-size: 0.85rem; margin-bottom: 0.75rem; line-height: 1.5;">
-          Directly connect and schedule a 1-on-1 discussion on <strong>Google Calendar</strong> with Deepanshu (<span style="color: #38BDF8;">deep270804@gmail.com</span>).
+        <p style="color: #94A3B8; font-size: 0.82rem; margin-bottom: 1rem; line-height: 1.5;">
+          Select a meeting type below to book a 30-min slot via <strong style="color: #E2E8F0;">Calendly</strong>:
         </p>
-        <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.5rem;">
-          <a href="${calUrl}" target="_blank" rel="noopener noreferrer" class="term-link-btn" style="background: #38BDF8; color: #000000; font-weight: 700;">
-            <i data-lucide="calendar"></i>
-            <span>Open in Google Calendar</span>
-            <i data-lucide="arrow-up-right"></i>
+        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+          <a href="https://calendly.com/deep270804/new-meeting" target="_blank" rel="noopener noreferrer" class="term-link-btn" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); color: #FFFFFF; font-weight: 600; padding: 0.7rem 1rem; border-radius: 12px; justify-content: flex-start; gap: 0.6rem;" id="meetWorkBtn">
+            <span style="font-size: 1.1rem;">📁</span>
+            <span>Work (Open-Source) Related  <span style="color: #94A3B8; font-size: 0.78rem;">( Click me 👆 )</span></span>
           </a>
-          <a href="mailto:deep270804@gmail.com?subject=Schedule%20a%20Meeting%20with%20Deepanshu" target="_blank" class="term-link-btn">
-            <i data-lucide="mail"></i>
-            <span>Email Direct Invite</span>
+          <a href="https://calendly.com/deep270804/request-service" target="_blank" rel="noopener noreferrer" class="term-link-btn" style="background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.3); color: #FFFFFF; font-weight: 600; padding: 0.7rem 1rem; border-radius: 12px; justify-content: flex-start; gap: 0.6rem;" id="meetServiceBtn">
+            <span style="font-size: 1.1rem;">🤝</span>
+            <span>Request Service  <span style="color: #94A3B8; font-size: 0.78rem;">( Click me 👆 )</span></span>
           </a>
         </div>
       </div>
     `);
     if (window.lucide) window.lucide.createIcons();
-    try {
-      window.open(calUrl, '_blank');
-    } catch (e) {
-      // Browser popup blocker fallback
-    }
-  } 
+  }
   else if (lower === "social -a") {
     trueValue(value);
     createText(`
@@ -564,11 +554,11 @@ async function executeCommand(rawVal) {
       </div>
     `);
     if (window.lucide) window.lucide.createIcons();
-  } 
+  }
   else if (lower === "social") {
     trueValue(value);
     createText("<span style='color: #F59E0B;'>Didn't you mean: <strong style='color:#FFF;'>social -a</strong>?</span>");
-  } 
+  }
   else if (lower === "resume") {
     trueValue(value);
     createText(`
@@ -597,7 +587,7 @@ async function executeCommand(rawVal) {
     } catch (e) {
       // Browser popup blocker fallback
     }
-  } 
+  }
   else if (lower === "message" || lower === "msg") {
     trueValue(value);
     createText(`
@@ -630,10 +620,10 @@ async function executeCommand(rawVal) {
     trueValue(value);
     openDrawer(contactDrawer);
     createText("<span style='color: #34D399;'>🤝 Opening direct Contact Panel (Email, Phone, WhatsApp, LinkedIn)...</span>");
-  } 
+  }
   else if (lower === "clear") {
     terminalApp.innerHTML = "";
-  } 
+  }
   else if (lower === "status" || lower === "health" || lower === "node") {
     trueValue(value);
     try {
@@ -667,7 +657,7 @@ async function executeCommand(rawVal) {
     setTimeout(() => {
       window.location.href = "about:blank";
     }, 200);
-  } 
+  }
   else {
     falseValue(value);
     createText(`<span style='color: #EF4444;'>command not found: ${escapeHtml(value)}</span>. Type <strong style='color: #FFF;'>'ls'</strong> for available commands.`);
